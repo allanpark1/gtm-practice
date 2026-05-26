@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA — GTM 실습 쇼핑몰</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --card: #1c1c1c;
+    --accent: #ff4d00;
+    --accent2: #ffaa00;
+    --text: #f0f0f0;
+    --muted: #888;
+    --border: #2a2a2a;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 300;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 48px;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 6px;
+    color: var(--text);
+  }
+  .logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-right { display: flex; gap: 16px; align-items: center; }
+  .cart-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+  }
+  .cart-btn:hover { background: #ff6620; transform: translateY(-1px); }
+
+  /* HERO */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 88vh;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 64px;
+    position: relative;
+  }
+  .hero-left::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 1px; height: 100%;
+    background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+  }
+  .hero-tag {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 8vw, 110px);
+    line-height: 0.9;
+    letter-spacing: 2px;
+    margin-bottom: 32px;
+  }
+  .hero-title span { color: var(--accent); }
+  .hero-desc {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.8;
+    max-width: 400px;
+    margin-bottom: 48px;
+  }
+  .hero-btns { display: flex; gap: 16px; }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 16px 40px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.1);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  .btn-primary:hover::before { transform: translateX(0); }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,77,0,0.4); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 16px 40px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--text); }
+
+  .hero-right {
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-img-placeholder {
+    width: 320px;
+    height: 420px;
+    background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  .product-icon { font-size: 80px; }
+  .product-badge {
+    background: var(--accent);
+    color: white;
+    font-size: 11px;
+    letter-spacing: 3px;
+    padding: 6px 16px;
+    text-transform: uppercase;
+  }
+  .hero-noise {
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  /* GTM 안내 배너 */
+  .gtm-banner {
+    background: linear-gradient(90deg, #1a1a00, #1a0a00);
+    border-top: 1px solid var(--accent2);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 48px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .gtm-badge {
+    background: var(--accent2);
+    color: #000;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 4px 10px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .gtm-banner p {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .gtm-banner strong { color: var(--accent2); }
+
+  /* PRODUCTS */
+  .section { padding: 80px 48px; }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 4px;
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-count {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+  .product-card {
+    background: var(--card);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s;
+    position: relative;
+  }
+  .product-card:hover { transform: translateY(-4px); z-index: 1; }
+  .product-card:hover .product-card-overlay { opacity: 1; }
+  .product-img {
+    height: 260px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .product-card-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255,77,0,0.08);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .product-info { padding: 20px; }
+  .product-name {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+  }
+  .product-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+  .product-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .btn-cart {
+    flex: 1;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-cart:hover { background: #ff6620; }
+  .btn-wish {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+  }
+  .btn-wish:hover { border-color: var(--accent); color: var(--accent); }
+  .tag-new {
+    position: absolute;
+    top: 12px; left: 12px;
+    background: var(--accent);
+    color: white;
+    font-size: 10px;
+    letter-spacing: 2px;
+    padding: 4px 8px;
+    text-transform: uppercase;
+  }
+  .tag-sale {
+    position: absolute;
+    top: 12px; left: 12px;
+    background: var(--accent2);
+    color: #000;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 4px 8px;
+    text-transform: uppercase;
+  }
+
+  /* NEWSLETTER */
+  .newsletter {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 80px 48px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .newsletter-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    line-height: 1;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+  }
+  .newsletter-title span { color: var(--accent); }
+  .newsletter-desc { color: var(--muted); font-size: 14px; line-height: 1.8; }
+  .newsletter-form { display: flex; flex-direction: column; gap: 16px; }
+  .form-row { display: flex; gap: 12px; }
+  .form-input {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 20px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--accent); }
+  .form-input::placeholder { color: var(--muted); }
+  .form-submit {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .form-submit:hover { background: #ff6620; transform: translateY(-1px); }
+  .form-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .form-check input[type="checkbox"] { accent-color: var(--accent); width: 14px; height: 14px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: var(--card);
+    border-left: 3px solid var(--accent);
+    padding: 16px 24px;
+    font-size: 13px;
+    color: var(--text);
+    transform: translateX(120%);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 999;
+    max-width: 300px;
+  }
+  .toast.show { transform: translateX(0); }
+  .toast strong { color: var(--accent); display: block; margin-bottom: 4px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+
+  /* GTM EVENT LOG */
+  .gtm-log {
+    position: fixed;
+    bottom: 32px;
+    left: 32px;
+    background: rgba(0,0,0,0.92);
+    border: 1px solid var(--border);
+    width: 320px;
+    max-height: 280px;
+    overflow: hidden;
+    z-index: 999;
+    font-family: 'Courier New', monospace;
+  }
+  .gtm-log-header {
+    background: var(--card);
+    padding: 8px 16px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .gtm-log-dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: blink 1s infinite;
+  }
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+  .gtm-log-body {
+    padding: 12px;
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+  .log-entry {
+    padding: 6px 10px;
+    background: rgba(255,77,0,0.06);
+    border-left: 2px solid var(--accent);
+    animation: slideIn 0.3s ease;
+  }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
+  .log-entry .event-name { color: var(--accent2); font-weight: bold; }
+  .log-entry .event-time { color: #555; font-size: 10px; }
+  .log-empty { color: #444; font-size: 11px; text-align: center; padding: 20px; }
+
+  /* FOOTER */
+  footer {
+    padding: 40px 48px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  /* SCROLL ANIMATION */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">NO<span>V</span>A</div>
+  <ul class="nav-links">
+    <li><a href="#" onclick="logEvent('nav_click', 'home')">홈</a></li>
+    <li><a href="#products" onclick="logEvent('nav_click', 'products')">상품</a></li>
+    <li><a href="#newsletter" onclick="logEvent('nav_click', 'newsletter')">뉴스레터</a></li>
+    <li><a href="#" onclick="logEvent('nav_click', 'about')">브랜드</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="cart-btn" onclick="logEvent('cart_open', 'nav_cart_button')">🛒 장바구니</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">🔴 GTM 실습용 쇼핑몰</div>
+    <h1 class="hero-title">NEW<br>SEASON<br><span>DROP</span></h1>
+    <p class="hero-desc">GTM 트리거 연습을 위한 가상 쇼핑몰입니다. 버튼을 클릭하거나 폼을 제출해보세요. 왼쪽 하단에서 이벤트 로그를 확인할 수 있어요.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="logEvent('cta_click', '지금_쇼핑하기')">지금 쇼핑하기</button>
+      <button class="btn-secondary" onclick="logEvent('cta_click', '신상품_보기')">신상품 보기</button>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-noise"></div>
+    <div class="hero-img-placeholder">
+      <div class="product-icon">👟</div>
+      <div class="product-badge">SS 2026</div>
+    </div>
+  </div>
+</section>
+
+<!-- GTM 안내 배너 -->
+<div class="gtm-banner">
+  <div class="gtm-badge">GTM 실습</div>
+  <p>이 페이지의 모든 버튼 클릭, 폼 제출, 스크롤 이벤트가 <strong>왼쪽 하단 로그</strong>에 기록됩니다. GTM에서는 이 이벤트들을 트리거로 활용할 수 있어요!</p>
+</div>
+
+<!-- PRODUCTS -->
+<section class="section" id="products">
+  <div class="section-header">
+    <h2 class="section-title fade-up">Products</h2>
+    <div class="section-line"></div>
+    <div class="section-count">04 ITEMS</div>
+  </div>
+  <div class="products-grid">
+
+    <div class="product-card fade-up" onclick="logEvent('product_click', 'NOVA 에어 스니커즈')">
+      <div class="product-img">
+        👟
+        <div class="tag-new">New</div>
+        <div class="product-card-overlay"></div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">NOVA 에어 스니커즈</div>
+        <div class="product-price">₩189,000</div>
+        <div class="product-actions">
+          <button class="btn-cart" onclick="event.stopPropagation(); addToCart('NOVA 에어 스니커즈', 189000)">장바구니</button>
+          <button class="btn-wish" onclick="event.stopPropagation(); logEvent('wishlist_add', 'NOVA 에어 스니커즈')">♡</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card fade-up" onclick="logEvent('product_click', '오버사이즈 후드티')">
+      <div class="product-img">
+        🧥
+        <div class="tag-sale">-30%</div>
+        <div class="product-card-overlay"></div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">오버사이즈 후드티</div>
+        <div class="product-price">₩79,000</div>
+        <div class="product-actions">
+          <button class="btn-cart" onclick="event.stopPropagation(); addToCart('오버사이즈 후드티', 79000)">장바구니</button>
+          <button class="btn-wish" onclick="event.stopPropagation(); logEvent('wishlist_add', '오버사이즈 후드티')">♡</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card fade-up" onclick="logEvent('product_click', '미니멀 크로스백')">
+      <div class="product-img">
+        👜
+        <div class="product-card-overlay"></div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">미니멀 크로스백</div>
+        <div class="product-price">₩145,000</div>
+        <div class="product-actions">
+          <button class="btn-cart" onclick="event.stopPropagation(); addToCart('미니멀 크로스백', 145000)">장바구니</button>
+          <button class="btn-wish" onclick="event.stopPropagation(); logEvent('wishlist_add', '미니멀 크로스백')">♡</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="product-card fade-up" onclick="logEvent('product_click', '레트로 선글라스')">
+      <div class="product-img">
+        🕶️
+        <div class="tag-new">New</div>
+        <div class="product-card-overlay"></div>
+      </div>
+      <div class="product-info">
+        <div class="product-name">레트로 선글라스</div>
+        <div class="product-price">₩62,000</div>
+        <div class="product-actions">
+          <button class="btn-cart" onclick="event.stopPropagation(); addToCart('레트로 선글라스', 62000)">장바구니</button>
+          <button class="btn-wish" onclick="event.stopPropagation(); logEvent('wishlist_add', '레트로 선글라스')">♡</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<div class="newsletter" id="newsletter">
+  <div>
+    <div class="newsletter-title fade-up">GET THE<br><span>LATEST</span><br>DROPS</div>
+    <p class="newsletter-desc fade-up">신상품 소식, 프로모션 알림을 가장 먼저 받아보세요.<br>이 폼 제출도 GTM 트리거 실습 대상이에요!</p>
+  </div>
+  <div class="newsletter-form fade-up">
+    <div class="form-row">
+      <input type="text" class="form-input" placeholder="이름" id="inputName">
+      <input type="email" class="form-input" placeholder="이메일" id="inputEmail">
+    </div>
+    <label class="form-check">
+      <input type="checkbox" id="agreeCheck"> 마케팅 수신에 동의합니다
+    </label>
+    <button class="form-submit" onclick="submitForm()">구독하기 →</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo" style="font-size:20px">NO<span style="color:var(--accent)">V</span>A</div>
+  <div>GTM 실습용 페이지 — © 2026 NOVA</div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <strong id="toastTitle"></strong>
+  <span id="toastMsg"></span>
+</div>
+
+<!-- GTM EVENT LOG -->
+<div class="gtm-log">
+  <div class="gtm-log-header">
+    <span>DataLayer 이벤트 로그</span>
+    <div class="gtm-log-dot"></div>
+  </div>
+  <div class="gtm-log-body" id="logBody">
+    <div class="log-empty">버튼을 클릭하면<br>이벤트가 기록됩니다</div>
+  </div>
+</div>
+
+<script>
+  // GTM DataLayer 초기화
+  window.dataLayer = window.dataLayer || [];
+
+  const logBody = document.getElementById('logBody');
+  let logCount = 0;
+
+  function logEvent(eventName, detail) {
+    // GTM DataLayer에 push
+    window.dataLayer.push({ event: eventName, detail: detail, timestamp: new Date().toISOString() });
+
+    // 로그 UI 업데이트
+    logCount++;
+    const empty = logBody.querySelector('.log-empty');
+    if (empty) empty.remove();
+
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    const time = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    entry.innerHTML = `<span class="event-name">▶ ${eventName}</span><span style="color:#aaa"> "${detail}"</span><br><span class="event-time">${time}</span>`;
+    logBody.appendChild(entry);
+    logBody.scrollTop = logBody.scrollHeight;
+
+    console.log(`[GTM DataLayer] event: ${eventName}, detail: ${detail}`);
+  }
+
+  function showToast(title, msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastTitle').textContent = title;
+    document.getElementById('toastMsg').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2800);
+  }
+
+  function addToCart(name, price) {
+    logEvent('add_to_cart', name);
+    window.dataLayer.push({ event: 'add_to_cart', item_name: name, price: price, currency: 'KRW' });
+    showToast('장바구니 추가', `${name} → ₩${price.toLocaleString()}`);
+  }
+
+  function submitForm() {
+    const name = document.getElementById('inputName').value;
+    const email = document.getElementById('inputEmail').value;
+    const agree = document.getElementById('agreeCheck').checked;
+
+    if (!name || !email) {
+      showToast('입력 오류', '이름과 이메일을 입력해주세요');
+      return;
+    }
+
+    logEvent('form_submit', `newsletter_${agree ? 'agree' : 'no_agree'}`);
+    window.dataLayer.push({ event: 'generate_lead', form_name: 'newsletter', marketing_agree: agree });
+    showToast('구독 완료!', `${name}님, 구독해주셔서 감사합니다`);
+
+    document.getElementById('inputName').value = '';
+    document.getElementById('inputEmail').value = '';
+    document.getElementById('agreeCheck').checked = false;
+  }
+
+  // 스크롤 50% 감지
+  let scroll50Fired = false;
+  window.addEventListener('scroll', () => {
+    const pct = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+    if (pct >= 50 && !scroll50Fired) {
+      scroll50Fired = true;
+      logEvent('scroll_depth', '50%');
+    }
+  });
+
+  // Fade-up animation
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
